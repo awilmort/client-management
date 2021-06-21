@@ -1,0 +1,49 @@
+
+ul.horizontal {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    overflow: hidden;
+    background-color: #333;
+    color: white;
+    padding: 20px;
+}
+
+ul.horizontal a {
+    color: white;
+    text-decoration: none;
+    font-size: 30px;
+}
+
+ul {
+    display: block;
+    list-style-type: disc;
+    margin-block-start: 1em;
+    margin-block-end: 1em;
+    margin-inline-start: 0px;
+    margin-inline-end: 0px;
+    padding-inline-start: 40px;
+}
+
+ul.horizontal li {
+    float: left;
+}
+
+li {
+    display: list-item;
+}
+
+ul.horizontal .center {
+    float: none;
+    text-align: center;
+    display: inline;
+}
+
+
+ul.horizontal li a {
+    display: inline-block;
+    color: white;
+    text-align: center;
+    padding: 14px 16px;
+    text-decoration: none;
+}

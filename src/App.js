@@ -1,7 +1,8 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
 import TestComponent from './TestComponent/TestComponent';
+import NavBar from './components/NavBar/NavBar';
+import Main from './components/Main';
 
 class App extends React.Component {
 
@@ -14,14 +15,14 @@ class App extends React.Component {
 
 
     fetch('http://localhost:4002/enterprise').then(res => {
-      console.log('--- Enterprise : ', res);
+      //console.log('--- Enterprise : ', res);
       if (res.ok) {
         return res.json();
       } else {
         return res.text().then(text => {throw new Error(text)})
       }
     }).then(res => {
-      console.log('--- Enterprise then: ', res);
+      //console.log('--- Enterprise then: ', res);
       this.setState({data: res});
     }).catch(err => {
       console.log('--- Enterprise catch: ', err);
@@ -32,20 +33,9 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
+        <NavBar />
+        <Main />
         <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <p>
-            Edit <code>src/App.js</code> and save to reload.
-          </p>
-          <a
-            className="App-link"
-            href="https://reactjs.org"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Learn React
-          </a>
-          <TestComponent data={this.state.data}/>
         </header>
       </div>
     );
