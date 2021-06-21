@@ -1,11 +1,11 @@
-const EnterpriseService = require('../services/EnterpriseService');
+const AddressService = require('../services/AddressService');
 const RouterFactory = require('./RouterFactory');
 const express = require('express');
 
 const Router = express.Router();
 
 
-const routerFactory =  new RouterFactory(new EnterpriseService()); 
+const routerFactory =  new RouterFactory(new AddressService()); 
 
 Router.get('/', routerFactory.getAll);
 

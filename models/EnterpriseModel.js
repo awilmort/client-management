@@ -1,4 +1,3 @@
-const pool = require('../dbconn');
 const APIFactory = require('./APIFactory');
 
 class EnterpriseModel extends APIFactory{

@@ -18,7 +18,7 @@ class APIFactory {
 
     getById(id) {
         return new Promise((resolve, reject) => {
-            pool.query('SELECT * FROM ' + this.tableName + ' WHERE id =$1', [id], (err, results) => {
+            pool.query('SELECT * FROM ' + this.tableName + ' WHERE id = $1', [id], (err, results) => {
                 if (err) return reject(err);
                 resolve(results.rows);
             });
@@ -28,21 +28,31 @@ class APIFactory {
     create(record) {
         return new Promise((resolve, reject) => {
             const insertClause = this.getInsertClause();
-            const valuesToInsert = this.getValuesToInsert(record)
+            const valuesToInsert = this.getValuesToAdd(record);
             pool.query(insertClause, valuesToInsert, (err, results) => {
                 if (err) return reject(err);
-                resolve(results.rows);
+                resolve(results.insertId);
             });
         });
     }
 
     update(record) {
         return new Promise((resolve, reject) => {
-            const insertClause = this.getInsertClause();
-            const valuesToInsert = this.getValuesToInsert(record)
-            pool.query(insertClause, valuesToInsert, (err, results) => {
+            const updateClause = this.getUpdateClause();
+            const valuesToUpdate = this.getValuesToAdd(record);
+            valuesToUpdate.push(record.id);
+            pool.query(updateClause, valuesToUpdate, (err, results) => {
                 if (err) return reject(err);
-                resolve(results.rows);
+                resolve(record.id);
+            });
+        });
+    }
+
+    remove(id) {
+        return new Promise((resolve, reject) => {
+            pool.query('DELETE FROM ' + this.tableName + ' WHERE id = $1', [id], (err, results) => {
+                if (err) return reject(err);
+                resolve(id);
             });
         });
     }
@@ -52,7 +62,7 @@ class APIFactory {
         let valueNumbers = '(';
         this.fieldNames.forEach((field, index) => {
             fieldsToInsert += field;
-            valueNumbers += (index+1);
+            valueNumbers += '$' + (index+1);
         });
         fieldsToInsert += ') ';
         valueNumbers += ') ';
@@ -61,12 +71,25 @@ class APIFactory {
         return insertClause;
     }
 
-    getValuesToInsert(record) {
-        let valuesToInsert = [];
-        this.fieldNames.forEach(field => {
-            valuesToInsert.push(record[field]);
+    getUpdateClause() {
+        let updateClause = 'UPDATE ' + this.tableName + ' SET ';
+        this.fieldNames.forEach((field, index) => {
+            updateClause += field + ' = $' (index+1);
+            if (index !== this.fieldNames.length - 1) {
+                updateClause+= ', ';
+            }
         });
-        return valuesToInsert;
+
+        updateClause += ' WHERE id = $' + this.fieldNames.length + 1;
+        return updateClause;
+    }
+
+    getValuesToAdd(record) {
+        let valuesToAdd = [];
+        this.fieldNames.forEach(field => {
+            valuesToAdd.push(record[field]);
+        });
+        return valuesToAdd;
     }
 
 }
