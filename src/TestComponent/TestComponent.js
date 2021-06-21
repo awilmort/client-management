@@ -4,10 +4,16 @@ import PropTypes from 'prop-types';
 export default class TestComponent extends React.Component {
 
     render() {
-        return <p>{this.props.name}</p>
+        let renderData = this.props.data ? this.props.data.map(e => <p key={e.id}>{e.name}</p>) : 'Loading...';
+        return (
+            <div>
+                {renderData}
+            </div>
+        );
     }
 }
 
+/*
 TestComponent.propTypes = {
     name: PropTypes.string.isRequired
-}
+}*/
