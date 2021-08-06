@@ -4,7 +4,10 @@ class AddressModel extends APIFactory{
     
     constructor() {
         const fieldNames = ['clientId', 'street', 'locality', 'city', 'country'];
-        super('address', fieldNames);
+        const relationships = [
+            {name: 'client', type: 'parent', fields: [{fieldName: 'firstName', label: 'clientName'}, {fieldName: 'lastname', label: 'clientLastname'}], joinField: 'clientId'}
+        ];
+        super('address', fieldNames, relationships);
     }
 
 }

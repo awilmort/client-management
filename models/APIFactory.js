@@ -2,14 +2,16 @@ const pool = require('../dbconn');
 
 class APIFactory {
 
-    constructor(tableName, fieldNames) {
+    constructor(tableName, fieldNames, relationships) {
         this.tableName = tableName;
         this.fieldNames = fieldNames;
+        this.relationships = relationships;
     }
 
     getAll() {
         return new Promise((resolve, reject) => {
-            pool.query('SELECT * FROM ' + this.tableName, (err, results) => {
+            const query = this.relationships ? this.getJOINQuery() : 'SELECT * FROM ' + this.tableName;
+            pool.query(query, (err, results) => {
                 if (err) return reject(err);
                 resolve(results.rows);
             });
@@ -90,6 +92,34 @@ class APIFactory {
             valuesToAdd.push(record[field]);
         });
         return valuesToAdd;
+    }
+
+    getJOINQuery() {
+        const tablePrefix = this.tableName.substring(0,1);
+        let query = 'SELECT ' + tablePrefix + '.id, ';
+
+        this.fieldNames.forEach((field, index) => {
+            query += tablePrefix + '.' + field;
+            if (index !== this.fieldNames.length - 1) {
+                query += ', ';
+            }
+        });
+
+        this.relationships.forEach(r => {
+            const relPrefix = r.name.substring(0,2);
+            r.fields.forEach(field => {
+                query += ', ' + relPrefix + '.' + field.fieldName + ' ' + field.label;
+            });
+        });
+
+        query += ' FROM ' + this.tableName + ' ' + tablePrefix;
+
+        this.relationships.forEach(r => {
+            const relPrefix = r.name.substring(0,2);
+            query += ' LEFT JOIN ' + r.name + ' ' + relPrefix + ' ON ' + tablePrefix + '.' + r.joinField + ' = ' + relPrefix + '.id;';
+        });
+
+        return query;
     }
 
 }
